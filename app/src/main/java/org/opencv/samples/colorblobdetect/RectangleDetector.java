@@ -31,6 +31,8 @@ public class RectangleDetector {
     Mat blueMask = new Mat();
     Mat dilatedMask = new Mat();
 
+    Mat pyrDownMat = new Mat();
+
     Scalar contourColor = new Scalar(255, 0, 0, 255);
 
     private List<MatOfPoint> mContours = new ArrayList<MatOfPoint>();
@@ -75,14 +77,27 @@ public class RectangleDetector {
 
     }
 
-    public void processOcr(Mat rgbaImage) {
-        Imgproc.pyrDown(rgbaImage, rgbaImage);
-        Bitmap bmp = Bitmap.createBitmap(rgbaImage.width(), rgbaImage.height(), Bitmap.Config.ARGB_8888);
-        Utils.matToBitmap(rgbaImage, bmp);
+    public String processOcr(Mat rgbaImage) {
+//        pyrDownMat = rgbaImage;
+        Imgproc.pyrDown(rgbaImage, pyrDownMat);
+        Imgproc.pyrDown(pyrDownMat, pyrDownMat);
+
+        // convert to grayscale
+        Imgproc.cvtColor(pyrDownMat, pyrDownMat, Imgproc.COLOR_RGB2GRAY);
+        Imgproc.threshold(pyrDownMat, pyrDownMat, 128, 255, Imgproc.THRESH_BINARY | Imgproc.THRESH_OTSU);
+        Core.bitwise_not(pyrDownMat, pyrDownMat);
+
+
+//        Imgproc.adaptiveThreshold(pyrDownMat, pyrDownMat, );
+        Bitmap bmp = Bitmap.createBitmap(pyrDownMat.width(), pyrDownMat.height(), Bitmap.Config.ARGB_8888);
+        Utils.matToBitmap(pyrDownMat, bmp);
         baseApi.setImage(bmp);
         String recognizedText = baseApi.getUTF8Text();
         Log.i("OCR", recognizedText);
         baseApi.clear();
+
+        return recognizedText;
+//        rgbaImage = pyrDownMat;
     }
 
 //    public List<MatOfPoint> getContours() {

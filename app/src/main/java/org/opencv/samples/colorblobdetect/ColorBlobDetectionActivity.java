@@ -2,6 +2,7 @@ package org.opencv.samples.colorblobdetect;
 
 import java.util.List;
 
+import android.widget.TextView;
 import org.opencv.android.BaseLoaderCallback;
 import org.opencv.android.CameraBridgeViewBase.CvCameraViewFrame;
 import org.opencv.android.LoaderCallbackInterface;
@@ -39,6 +40,7 @@ public class ColorBlobDetectionActivity extends Activity implements OnTouchListe
     private Scalar               CONTOUR_COLOR;
 
     private CameraBridgeViewBase mOpenCvCameraView;
+    private TextView textView;
 
     private BaseLoaderCallback  mLoaderCallback = new BaseLoaderCallback(this) {
         @Override
@@ -67,13 +69,17 @@ public class ColorBlobDetectionActivity extends Activity implements OnTouchListe
     public void onCreate(Bundle savedInstanceState) {
         Log.i(TAG, "called onCreate");
         super.onCreate(savedInstanceState);
-        requestWindowFeature(Window.FEATURE_NO_TITLE);
+        //requestWindowFeature(Window.FEATURE_NO_TITLE);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
         setContentView(R.layout.color_blob_detection_surface_view);
 
         mOpenCvCameraView = (CameraBridgeViewBase) findViewById(R.id.color_blob_detection_activity_surface_view);
         mOpenCvCameraView.setCvCameraViewListener(this);
+        mOpenCvCameraView.enableFpsMeter();
+
+        textView = (TextView) findViewById(R.id.textView);
+//        mOpenCvCameraView.
     }
 
     @Override
@@ -168,10 +174,19 @@ public class ColorBlobDetectionActivity extends Activity implements OnTouchListe
     }
 
     public Mat onCameraFrame(CvCameraViewFrame inputFrame) {
+        // schon als gray beziehen?
         mRgba = inputFrame.rgba();
 
 //        if (mIsColorSelected) {
-            mDetector.processOcr(mRgba);
+        final String recognizedText = mDetector.processOcr(mRgba);
+
+        // performance?
+        runOnUiThread(new Runnable() {
+            public void run() {
+                textView.setText(recognizedText);
+            }
+        });
+
 
 
 //            List<MatOfPoint> contours = mDetector.getContours();

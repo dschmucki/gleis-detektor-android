@@ -1,11 +1,17 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent" >
+    android:layout_height="match_parent" android:orientation="horizontal">
 
     <org.opencv.android.JavaCameraView
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        android:id="@+id/color_blob_detection_activity_surface_view" />
+        android:id="@+id/color_blob_detection_activity_surface_view" android:layout_weight="1"/>
+    <TextView
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:id="@+id/textView" android:editable="false" android:layout_weight="4"
+            android:padding="10dp" android:background="@color/background_material_light"
+            android:textColor="@color/primary_text_default_material_light"/>
 
 </LinearLayout>

@@ -177,8 +177,9 @@ public class ColorBlobDetectionActivity extends Activity implements OnTouchListe
         // schon als gray beziehen?
         mRgba = inputFrame.rgba();
 
-//        if (mIsColorSelected) {
-        final String recognizedText = mDetector.processOcr(mRgba);
+        Rect blueRect = mDetector.trackBlue(mRgba);
+        Rect whiteRect = mDetector.trackWhite(mRgba, blueRect);
+        final String recognizedText = mDetector.processOcr(mRgba, whiteRect);
 
         // performance?
         runOnUiThread(new Runnable() {
